@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Transition Cow Metabolic Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive dashboard, not a linear report. The core interaction is a toggle between 'Springer' and 'Fresh Cow' states. This immediately updates all five biomarker "cards" (Ca, Mg, P, NEFA, BHBA) on the dashboard, showing the relevant thresholds, charts, and key information for that specific group. This task-oriented design was chosen because a user's primary goal is to assess one group at a time, making this the most intuitive and efficient user flow. It avoids overwhelming the user with all data simultaneously and makes comparison simple. A 'Learn More' feature on each card allows for progressive disclosure of detailed text, catering to both novice and expert users without cluttering the main interface. -->
+    <!-- Visualization & Content Choices: Data is presented using interactive cards. For each biomarker, a semi-circle doughnut chart from Chart.js (Canvas) acts as a visual gauge, showing the critical threshold against color-coded risk zones (Normal, At-Risk, Danger). This provides instant visual assessment. Goal: Inform/Compare. Method: Canvas Chart. Interaction: Dynamic updates on state change. Justification: Gauges are more intuitive for range-based data than text alone. The "Disease Cascade" is visualized using a simple flowchart built with HTML/CSS/Tailwind and Unicode arrows. Goal: Organize/Show Relationships. Method: HTML/CSS. Interaction: None planned, static diagram. Justification: Meets the NO SVG/Mermaid constraint while being clear, lightweight, and responsive. All text is pulled from a central JS object, allowing for dynamic updates based on user selection. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcf9;
+            color: #44403c;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 150px;
+            max-height: 150px;
+        }
+        .control-button {
+            transition: all 0.3s ease;
+        }
+        .control-button.active {
+            background-color: #059669;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .control-button:not(.active) {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .details-content {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .details-content.show {
+            display: block;
+            max-height: 2000px;
+        }
+        .details-toggle {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-emerald-800">Transition Cow Metabolic Dashboard</h1>
+            <p class="mt-2 text-lg text-stone-600">An interactive guide to key blood biomarkers for proactive herd health management.</p>
+        </header>
+
+        <main>
+            <section id="controls" class="mb-8 p-4 bg-white rounded-xl shadow-sm border border-stone-200">
+                <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <p class="text-lg font-semibold text-stone-700">Select Cow Group to Analyze:</p>
+                    <div class="flex space-x-2">
+                        <button id="btn-springer" class="control-button font-semibold py-2 px-6 rounded-full">Springer / Pre-Calving</button>
+                        <button id="btn-fresh" class="control-button font-semibold py-2 px-6 rounded-full">Fresh / Early Lactation</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </section>
+
+            <section id="disease-cascade" class="mt-12 p-6 bg-white rounded-xl shadow-sm border border-stone-200">
+                <h2 class="text-2xl font-bold text-center text-emerald-800 mb-4">The Cascade of Metabolic Disease</h2>
+                <p class="text-center text-stone-600 mb-6 max-w-3xl mx-auto">A key principle of transition cow health is that metabolic disorders are highly interconnected. A single, often subclinical, issue like low calcium can trigger a "vicious cycle" of secondary problems, demonstrating the need for integrated management.</p>
+                <div class="flex flex-col items-center space-y-2 text-center">
+                    <div class="p-3 bg-red-100 border-2 border-red-300 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-red-800">Subclinical Hypocalcemia (SCH)</h3>
+                        <p class="text-sm text-red-700">Impaired muscle function & immunity</p>
+                    </div>
+                    <div class="text-3xl text-stone-500">↓</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+                        <div class="p-3 bg-amber-100 border-2 border-amber-300 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-amber-800">Reduced Gut Motility</h3>
+                            <p class="text-sm text-amber-700">Lower DMI, worsens NEB</p>
+                            <div class="text-2xl text-stone-500 mt-1">→</div>
+                            <p class="font-semibold text-amber-900">Risk of Displaced Abomasum (DA)</p>
+                        </div>
+                        <div class="p-3 bg-amber-100 border-2 border-amber-300 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-amber-800">Weak Uterine Contractions</h3>
+                             <div class="text-2xl text-stone-500 mt-1">→</div>
+                            <p class="font-semibold text-amber-900">Risk of Retained Placenta (RP) & Metritis</p>
+                        </div>
+                        <div class="p-3 bg-amber-100 border-2 border-amber-300 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-amber-800">Reduced Teat Sphincter Tone</h3>
+                             <div class="text-2xl text-stone-500 mt-1">→</div>
+                            <p class="font-semibold text-amber-900">Risk of Mastitis</p>
+                        </div>
+                    </div>
+                    <div class="text-3xl text-stone-500">↓</div>
+                    <div class="p-3 bg-orange-100 border-2 border-orange-300 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-orange-800">Worsening Negative Energy Balance (NEB)</h3>
+                        <p class="text-sm text-orange-700">Increased fat mobilization (High NEFA)</p>
+                    </div>
+                     <div class="text-3xl text-stone-500">↓</div>
+                     <div class="p-3 bg-rose-100 border-2 border-rose-300 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-rose-800">Overwhelmed Liver</h3>
+                        <p class="text-sm text-rose-700">Ketone production (High BHBA)</p>
+                        <div class="text-2xl text-stone-500 mt-1">→</div>
+                        <p class="font-semibold text-rose-900">Ketosis & Fatty Liver</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script>
+        const appData = {
+            springer: {
+                nefa: {
+                    title: "NEFA (Energy Balance)",
+                    unit: "mEq/L",
+                    threshold: 0.40,
+                    interpretation: "Predicts post-calving disease risk. High levels indicate significant energy deficit before calving.",
+                    chart: {
+                        labels: ['Normal', 'At Risk'],
+                        values: [0.40, 0.60],
+                        colors: ['#22c55e', '#f97316'],
+                        max: 1.0,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Pre-partum (Springer) Monitoring</h4>
+                        <p class="text-sm text-stone-600">Testing NEFA in the final 1-2 weeks before calving is a potent predictive tool. An elevated NEFA concentration (>0.40 mEq/L) during this period indicates that the cow is already in a significant state of negative energy balance before the challenge of lactation has even begun. This is a strong warning sign and is highly correlated with an increased risk of developing post-calving diseases like displaced abomasum, ketosis, and metritis.</p>
+                        <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
+                            <li>Manage Body Condition Score (BCS) to avoid over-conditioned cows at calving.</li>
+                            <li>Feed a controlled-energy, high-fiber diet to meet, but not greatly exceed, energy needs.</li>
+                            <li>Ensure adequate bunk space and minimize social stress to maximize Dry Matter Intake (DMI).</li>
+                        </ul>
+                    `
+                },
+                bhba: {
+                    title: "BHBA (Ketosis)",
+                    unit: "mmol/L",
+                    threshold: null,
+                    interpretation: "Not a primary concern pre-calving. Blood levels are very seldom elevated in this group.",
+                    chart: {
+                        labels: ['Normal'],
+                        values: [1.2],
+                        colors: ['#22c55e'],
+                        max: 1.2,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Pre-partum (Springer) Monitoring</h4>
+                        <p class="text-sm text-stone-600">BHBA is generally not monitored in pre-fresh cows. The metabolic pathway that leads to high BHBA (ketogenesis) is primarily a post-calving phenomenon driven by the massive energy demands of lactation. The focus for energy management in the springer group is on controlling NEFA levels, as this is the precursor to post-calving ketosis.</p>
+                    `
+                },
+                calcium: {
+                    title: "Calcium (Total)",
+                    unit: "mg/dL",
+                    threshold: null,
+                    interpretation: "Focus is on dietary management (DCAD) to prepare for the massive calcium demand at calving.",
+                     chart: {
+                        labels: ['Normal Range'],
+                        values: [10.0],
+                        colors: ['#22c55e'],
+                        max: 10.0,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Pre-partum Management Goal</h4>
+                        <p class="text-sm text-stone-600">The goal is not to manage blood calcium levels per se, but to 'prime' the cow's hormonal systems to be ready to mobilize her own calcium reserves at calving. This is most effectively achieved with a negative DCAD (Dietary Cation-Anion Difference) diet for the final 2-3 weeks pre-calving. This creates a mild metabolic acidosis, making her body highly responsive to PTH, the hormone that drives calcium mobilization from bone and absorption from the gut.</p>
+                        <h4 class="font-bold mt-4 mb-2">Key Strategies</h4>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
+                            <li>Feed a negative DCAD diet using anionic salts.</li>
+                            <li>Monitor urine pH to ensure the DCAD program is effective (target 6.2-6.8).</li>
+                            <li>Ensure adequate magnesium supplementation, as it's essential for the calcium system to work.</li>
+                            <li>Control dietary potassium (K), as it works against a negative DCAD.</li>
+                        </ul>
+                    `
+                },
+                magnesium: {
+                    title: "Magnesium",
+                    unit: "mg/dL",
+                    threshold: 1.8,
+                    interpretation: "Crucial for enabling calcium mobilization. Subclinical deficiency increases milk fever risk.",
+                    chart: {
+                        labels: ['Clinical Concern', 'Reference Range'],
+                        values: [1.8, 2.1],
+                        colors: ['#ef4444', '#22c55e'],
+                        max: 3.9,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">The Essential Cofactor</h4>
+                        <p class="text-sm text-stone-600">Magnesium is absolutely critical for preventing milk fever. The hormone PTH, which controls calcium mobilization, requires magnesium for both its secretion and its action on bone and kidney. A magnesium-deficient cow cannot effectively respond to the calcium drain at calving, regardless of her DCAD status. Cows have no readily available reserve, so daily supplementation is essential.</p>
+                        <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
+                            <li>Supplement with bioavailable magnesium to achieve 0.40-0.45% of ration dry matter.</li>
+                            <li>Be aware that high dietary potassium interferes with magnesium absorption.</li>
+                        </ul>
+                    `
+                },
+                phosphorus: {
+                    title: "Phosphorus",
+                    unit: "mg/dL",
+                    threshold: null,
+                    interpretation: "Adequacy is key, but over-supplementation is counterproductive. Focus on enabling calcium mobilization.",
+                    chart: {
+                        labels: ['Reference Range'],
+                        values: [7.9],
+                        colors: ['#22c55e'],
+                        max: 7.9,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">The Link to Calcium</h4>
+                        <p class="text-sm text-stone-600">Phosphorus regulation is tied to calcium. When the body mobilizes calcium from bone, it simultaneously releases phosphorus. Therefore, if the calcium homeostatic system is working correctly (thanks to proper DCAD and magnesium management), phosphorus needs will also be met. Over-supplementing phosphorus in the close-up period can interfere with this system and increase milk fever risk.</p>
+                    `
+                }
+            },
+            fresh: {
+                nefa: {
+                    title: "NEFA (Energy Balance)",
+                    unit: "mEq/L",
+                    threshold: 0.70,
+                    interpretation: "Diagnoses severity of current energy deficit. Very high levels indicate failure to adapt to lactation.",
+                    chart: {
+                        labels: ['Normal', 'At Risk'],
+                        values: [0.70, 0.5],
+                        colors: ['#22c55e', '#f97316'],
+                        max: 1.2,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Post-partum (Fresh Cow) Monitoring</h4>
+                        <p class="text-sm text-stone-600">Testing NEFA in the first 1-2 weeks after calving serves as a diagnostic tool to assess the severity of the current Negative Energy Balance. While some elevation is normal, excessively high levels (>0.70 mEq/L) indicate that the cow is failing to adapt and increase her DMI sufficiently to meet the demands of lactation. High NEFA is directly toxic to liver cells and suppresses immune function.</p>
+                        <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
+                            <li>Maximize DMI with a highly palatable, energy-dense fresh cow ration.</li>
+                            <li>Ensure excellent bunk management (feed availability, push-ups).</li>
+                            <li>Minimize all social and environmental stress (overcrowding, heat stress).</li>
+                        </ul>
+                    `
+                },
+                bhba: {
+                    title: "BHBA (Ketosis)",
+                    unit: "mmol/L",
+                    threshold: 1.2,
+                    interpretation: "The gold standard for diagnosing Subclinical Ketosis (SCK), a major gateway disease.",
+                    chart: {
+                        labels: ['Normal', 'Subclinical Ketosis', 'Clinical Ketosis'],
+                        values: [1.2, 1.4, 0.4],
+                        colors: ['#22c55e', '#f97316', '#ef4444'],
+                        max: 3.0,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Diagnosing Ketosis</h4>
+                        <p class="text-sm text-stone-600">BHBA is the definitive marker for ketosis, tested between 3 and 21 days in milk. It reflects the liver being overwhelmed by the NEFA mobilized due to NEB.</p>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1 mt-2">
+                            <li><strong>Subclinical Ketosis (SCK):</strong> Blood BHBA ≥ 1.2 mmol/L. No visible signs, but causes significant production loss and increases risk for other diseases.</li>
+                            <li><strong>Clinical Ketosis:</strong> Blood BHBA > 2.6 mmol/L. Visible signs like reduced appetite, lethargy, and drop in milk.</li>
+                        </ul>
+                        <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
+                         <p class="text-sm text-stone-600">Prevention strategies are the same as for controlling high NEFA: manage BCS pre-calving and maximize DMI post-calving.</p>
+                    `
+                },
+                calcium: {
+                    title: "Calcium (Total)",
+                    unit: "mg/dL",
+                    threshold: 8.5,
+                    interpretation: "Low levels define Subclinical Hypocalcemia (SCH), the most critical gateway disease.",
+                    chart: {
+                        labels: ['Clinical (Milk Fever)', 'Subclinical', 'Normal'],
+                        values: [5.5, 3.0, 1.5],
+                        colors: ['#ef4444', '#f97316', '#22c55e'],
+                        max: 10.0,
+                    },
+                     details: `
+                        <h4 class="font-bold mt-4 mb-2">The Gateway Disease</h4>
+                        <p class="text-sm text-stone-600">Failure to maintain blood calcium after calving has severe consequences. Even mild depression of calcium impairs muscle and immune function.</p>
+                        <ul class="list-disc list-inside text-sm text-stone-600 space-y-1 mt-2">
+                            <li><strong>Subclinical Hypocalcemia (SCH):</strong> Blood calcium < 8.0-8.5 mg/dL. No visible signs, but dramatically increases risk of DA, ketosis, metritis, and mastitis. Affects over 50% of multiparous cows.</li>
+                            <li><strong>Clinical Milk Fever:</strong> Blood calcium < 5.5 mg/dL. Cow is unable to stand (recumbent).</li>
+                        </ul>
+                         <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
+                         <p class="text-sm text-stone-600">Successful prevention relies on pre-calving DCAD and magnesium management. Post-calving oral calcium boluses can help high-risk cows.</p>
+                    `
+                },
+                magnesium: {
+                    title: "Magnesium",
+                    unit: "mg/dL",
+                    threshold: 1.8,
+                    interpretation: "Low levels reflect poor recent dietary intake and compromise the cow's entire metabolic engine.",
+                    chart: {
+                        labels: ['Clinical Concern', 'Reference Range'],
+                        values: [1.8, 2.1],
+                        colors: ['#ef4444', '#22c55e'],
+                        max: 3.9,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Energy & Calcium Enabler</h4>
+                        <p class="text-sm text-stone-600">In fresh cows, adequate magnesium is vital for energy metabolism. It's a required cofactor for all reactions involving ATP, the cell's energy currency. A deficiency directly impairs the cow's ability to use the energy she mobilizes from body fat, worsening NEB and increasing ketosis risk.</p>
+                    `
+                },
+                phosphorus: {
+                    title: "Phosphorus",
+                    unit: "mg/dL",
+                    threshold: 2.0,
+                    interpretation: "Severe deficiency is rare and usually secondary to other issues like prolonged anorexia.",
+                    chart: {
+                        labels: ['Severe Concern', 'Reference Range'],
+                        values: [2.0, 5.9],
+                        colors: ['#ef4444', '#22c55e'],
+                        max: 7.9,
+                    },
+                    details: `
+                        <h4 class="font-bold mt-4 mb-2">Secondary Complication</h4>
+                        <p class="text-sm text-stone-600">Acute, severe hypophosphatemia is most often seen in "downer cows" and is a consequence of prolonged lack of feed intake associated with milk fever, not a primary cause of the issue. The focus should remain on correcting the primary problem (e.g., hypocalcemia).</p>
+                    `
+                }
+            }
+        };
+
+        let currentState = 'fresh';
+        let charts = {};
+
+        function createBiomarkerCard(key, data) {
+            const card = document.createElement('div');
+            card.className = 'biomarker-card bg-white rounded-xl shadow-sm border border-stone-200 p-4 flex flex-col';
+            card.id = `card-${key}`;
+
+            const thresholdText = data.threshold !== null ?
+                `<span class="font-bold text-2xl ${data.threshold > 50 ? 'text-red-600' : (data.threshold > 1 ? 'text-amber-600' : 'text-emerald-600')}">${data.threshold}</span> <span class="text-stone-500">${data.unit}</span>` :
+                '<span class="text-lg text-stone-500">N/A</span>';
+            
+            const thresholdLabel = data.threshold !== null ? 'Key Threshold' : 'Status';
+
+            card.innerHTML = `
+                <h3 class="text-xl font-bold text-emerald-800">${data.title}</h3>
+                <p class="text-sm text-stone-500 mb-4 flex-grow">${data.interpretation}</p>
+                <div class="my-4">
+                    <div class="chart-container">
+                        <canvas id="chart-${key}"></canvas>
+                    </div>
+                </div>
+                <div class="text-center mb-4">
+                    <p class="text-sm font-medium text-stone-500">${thresholdLabel}</p>
+                    <div id="threshold-${key}" class="mt-1">${thresholdText}</div>
+                </div>
+                <div class="mt-auto border-t border-stone-200 pt-3">
+                    <div id="toggle-${key}" class="details-toggle text-center font-semibold text-emerald-700 hover:text-emerald-600 cursor-pointer">
+                        Learn More <span class="arrow">▼</span>
+                    </div>
+                    <div id="details-${key}" class="details-content mt-2 text-sm text-stone-700">
+                        ${data.details}
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function createAllCharts() {
+            Object.keys(appData.fresh).forEach(key => {
+                const ctx = document.getElementById(`chart-${key}`).getContext('2d');
+                const chartData = appData[currentState][key].chart;
+                charts[key] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            data: chartData.values,
+                            backgroundColor: chartData.colors,
+                            borderWidth: 0,
+                            circumference: 180,
+                            rotation: -90,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function updateDashboard() {
+            const dashboard = document.getElementById('dashboard');
+            const data = appData[currentState];
+
+            Object.keys(data).forEach(key => {
+                const cardData = data[key];
+                const chartInstance = charts[key];
+                
+                document.getElementById(`card-${key}`).querySelector('h3').textContent = cardData.title;
+                document.getElementById(`card-${key}`).querySelector('p').textContent = cardData.interpretation;
+                
+                const thresholdEl = document.getElementById(`threshold-${key}`);
+                if (cardData.threshold !== null) {
+                    thresholdEl.innerHTML = `<span class="font-bold text-2xl ${cardData.threshold > 50 ? 'text-red-600' : (cardData.threshold > 1.5 ? 'text-amber-600' : 'text-emerald-600')}">${cardData.threshold}</span> <span class="text-stone-500">${cardData.unit}</span>`;
+                    thresholdEl.previousElementSibling.textContent = 'Key Threshold';
+                } else {
+                    thresholdEl.innerHTML = `<span class="text-lg text-stone-500">N/A</span>`;
+                    thresholdEl.previousElementSibling.textContent = 'Status';
+                }
+
+                document.getElementById(`details-${key}`).innerHTML = cardData.details;
+
+                if (chartInstance) {
+                    chartInstance.data.labels = cardData.chart.labels;
+                    chartInstance.data.datasets[0].data = cardData.chart.values;
+                    chartInstance.data.datasets[0].backgroundColor = cardData.chart.colors;
+                    chartInstance.update();
+                }
+            });
+
+            document.getElementById('btn-springer').classList.toggle('active', currentState === 'springer');
+            document.getElementById('btn-fresh').classList.toggle('active', currentState === 'fresh');
+        }
+        
+        function init() {
+            const dashboard = document.getElementById('dashboard');
+            Object.keys(appData.fresh).forEach(key => {
+                const card = createBiomarkerCard(key, appData.fresh[key]);
+                dashboard.appendChild(card);
+            });
+
+            createAllCharts();
+            updateDashboard();
+
+            document.getElementById('btn-springer').addEventListener('click', () => {
+                currentState = 'springer';
+                updateDashboard();
+            });
+
+            document.getElementById('btn-fresh').addEventListener('click', () => {
+                currentState = 'fresh';
+                updateDashboard();
+            });
+
+            dashboard.addEventListener('click', function(e) {
+                const toggle = e.target.closest('.details-toggle');
+                if (toggle) {
+                    const content = toggle.nextElementSibling;
+                    const arrow = toggle.querySelector('.arrow');
+                    content.classList.toggle('show');
+                    if (content.classList.contains('show')) {
+                        arrow.innerHTML = '▲';
+                    } else {
+                        arrow.innerHTML = '▼';
+                    }
+                }
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
