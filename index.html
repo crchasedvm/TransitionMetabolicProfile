@@ -129,7 +129,7 @@
             springer: {
                 nefa: {
                     title: "NEFA (Energy Balance)",
-                    unit: "mEq/L",
+                    unit: "mmol/L",
                     threshold: 0.40,
                     interpretation: "Predicts post-calving disease risk. High levels indicate significant energy deficit before calving.",
                     chart: {
@@ -140,7 +140,7 @@
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Pre-partum (Springer) Monitoring</h4>
-                        <p class="text-sm text-stone-600">Testing NEFA in the final 1-2 weeks before calving is a potent predictive tool. An elevated NEFA concentration (>0.40 mEq/L) during this period indicates that the cow is already in a significant state of negative energy balance before the challenge of lactation has even begun. This is a strong warning sign and is highly correlated with an increased risk of developing post-calving diseases like displaced abomasum, ketosis, and metritis.</p>
+                        <p class="text-sm text-stone-600">Testing NEFA in the final 1-2 weeks before calving is a potent predictive tool. An elevated NEFA concentration (>0.40 mmol/L) during this period indicates that the cow is already in a significant state of negative energy balance before the challenge of lactation has even begun. This is a strong warning sign and is highly correlated with an increased risk of developing post-calving diseases like displaced abomasum, ketosis, and metritis.</p>
                         <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
                         <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
                             <li>Manage Body Condition Score (BCS) to avoid over-conditioned cows at calving.</li>
@@ -168,18 +168,18 @@
                 },
                 calcium: {
                     title: "Calcium (Total)",
-                    unit: "mg/dL",
-                    threshold: null,
-                    interpretation: "Focus is on dietary management (DCAD) to prepare for the massive calcium demand at calving.",
+                    unit: "mmol/L",
+                    threshold: 2.1,
+                    interpretation: "Goal is to maintain normal levels (2.1-2.5 mmol/L) by preparing the cow for mobilization via DCAD management.",
                      chart: {
-                        labels: ['Normal Range'],
-                        values: [10.0],
+                        labels: ['Target Range'],
+                        values: [2.5],
                         colors: ['#22c55e'],
-                        max: 10.0,
+                        max: 2.5,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Pre-partum Management Goal</h4>
-                        <p class="text-sm text-stone-600">The goal is not to manage blood calcium levels per se, but to 'prime' the cow's hormonal systems to be ready to mobilize her own calcium reserves at calving. This is most effectively achieved with a negative DCAD (Dietary Cation-Anion Difference) diet for the final 2-3 weeks pre-calving. This creates a mild metabolic acidosis, making her body highly responsive to PTH, the hormone that drives calcium mobilization from bone and absorption from the gut.</p>
+                        <p class="text-sm text-stone-600">The goal is not to manage blood calcium levels per se, but to 'prime' the cow's hormonal systems to be ready to mobilize her own calcium reserves at calving. The target is to keep cows within the normal physiological range of <strong>2.1-2.5 mmol/L</strong>. This is most effectively achieved with a negative DCAD (Dietary Cation-Anion Difference) diet for the final 2-3 weeks pre-calving. This creates a mild metabolic acidosis, making her body highly responsive to PTH, the hormone that drives calcium mobilization from bone and absorption from the gut.</p>
                         <h4 class="font-bold mt-4 mb-2">Key Strategies</h4>
                         <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
                             <li>Feed a negative DCAD diet using anionic salts.</li>
@@ -191,14 +191,14 @@
                 },
                 magnesium: {
                     title: "Magnesium",
-                    unit: "mg/dL",
-                    threshold: 1.8,
+                    unit: "mmol/L",
+                    threshold: 0.75,
                     interpretation: "Crucial for enabling calcium mobilization. Subclinical deficiency increases milk fever risk.",
                     chart: {
                         labels: ['Clinical Concern', 'Reference Range'],
-                        values: [1.8, 2.1],
+                        values: [0.75, 0.55],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 3.9,
+                        max: 1.3,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">The Essential Cofactor</h4>
@@ -212,25 +212,25 @@
                 },
                 phosphorus: {
                     title: "Phosphorus",
-                    unit: "mg/dL",
-                    threshold: null,
-                    interpretation: "Adequacy is key, but over-supplementation is counterproductive. Focus on enabling calcium mobilization.",
+                    unit: "mmol/L",
+                    threshold: 1.5,
+                    interpretation: "Goal is to maintain adequate levels (1.5-2.6 mmol/L). Over-supplementation is counterproductive.",
                     chart: {
-                        labels: ['Reference Range'],
-                        values: [7.9],
+                        labels: ['Target Range'],
+                        values: [2.6],
                         colors: ['#22c55e'],
-                        max: 7.9,
+                        max: 2.6,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">The Link to Calcium</h4>
-                        <p class="text-sm text-stone-600">Phosphorus regulation is tied to calcium. When the body mobilizes calcium from bone, it simultaneously releases phosphorus. Therefore, if the calcium homeostatic system is working correctly (thanks to proper DCAD and magnesium management), phosphorus needs will also be met. Over-supplementing phosphorus in the close-up period can interfere with this system and increase milk fever risk.</p>
+                        <p class="text-sm text-stone-600">Phosphorus regulation is tied to calcium. When the body mobilizes calcium from bone, it simultaneously releases phosphorus. The target is to keep cows within the normal range of <strong>1.5-2.6 mmol/L</strong>. If the calcium homeostatic system is working correctly (thanks to proper DCAD and magnesium management), phosphorus needs will also be met. Over-supplementing phosphorus in the close-up period can interfere with this delicate hormonal signaling and may even increase the risk of milk fever.</p>
                     `
                 }
             },
             fresh: {
                 nefa: {
                     title: "NEFA (Energy Balance)",
-                    unit: "mEq/L",
+                    unit: "mmol/L",
                     threshold: 0.70,
                     interpretation: "Diagnoses severity of current energy deficit. Very high levels indicate failure to adapt to lactation.",
                     chart: {
@@ -241,7 +241,7 @@
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Post-partum (Fresh Cow) Monitoring</h4>
-                        <p class="text-sm text-stone-600">Testing NEFA in the first 1-2 weeks after calving serves as a diagnostic tool to assess the severity of the current Negative Energy Balance. While some elevation is normal, excessively high levels (>0.70 mEq/L) indicate that the cow is failing to adapt and increase her DMI sufficiently to meet the demands of lactation. High NEFA is directly toxic to liver cells and suppresses immune function.</p>
+                        <p class="text-sm text-stone-600">Testing NEFA in the first 1-2 weeks after calving serves as a diagnostic tool to assess the severity of the current Negative Energy Balance. While some elevation is normal, excessively high levels (>0.70 mmol/L) indicate that the cow is failing to adapt and increase her DMI sufficiently to meet the demands of lactation. High NEFA is directly toxic to liver cells and suppresses immune function.</p>
                         <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
                         <ul class="list-disc list-inside text-sm text-stone-600 space-y-1">
                             <li>Maximize DMI with a highly palatable, energy-dense fresh cow ration.</li>
@@ -274,21 +274,21 @@
                 },
                 calcium: {
                     title: "Calcium (Total)",
-                    unit: "mg/dL",
-                    threshold: 8.5,
-                    interpretation: "Low levels define Subclinical Hypocalcemia (SCH), the most critical gateway disease.",
+                    unit: "mmol/L",
+                    threshold: 2.1,
+                    interpretation: "Low levels (<2.1 mmol/L) define Subclinical Hypocalcemia (SCH), the most critical gateway disease.",
                     chart: {
                         labels: ['Clinical (Milk Fever)', 'Subclinical', 'Normal'],
-                        values: [5.5, 3.0, 1.5],
+                        values: [1.4, 0.7, 0.4],
                         colors: ['#ef4444', '#f97316', '#22c55e'],
-                        max: 10.0,
+                        max: 2.5,
                     },
                      details: `
                         <h4 class="font-bold mt-4 mb-2">The Gateway Disease</h4>
                         <p class="text-sm text-stone-600">Failure to maintain blood calcium after calving has severe consequences. Even mild depression of calcium impairs muscle and immune function.</p>
                         <ul class="list-disc list-inside text-sm text-stone-600 space-y-1 mt-2">
-                            <li><strong>Subclinical Hypocalcemia (SCH):</strong> Blood calcium < 8.0-8.5 mg/dL. No visible signs, but dramatically increases risk of DA, ketosis, metritis, and mastitis. Affects over 50% of multiparous cows.</li>
-                            <li><strong>Clinical Milk Fever:</strong> Blood calcium < 5.5 mg/dL. Cow is unable to stand (recumbent).</li>
+                            <li><strong>Subclinical Hypocalcemia (SCH):</strong> Blood calcium < 2.1 mmol/L. No visible signs, but dramatically increases risk of DA, ketosis, metritis, and mastitis. Affects over 50% of multiparous cows.</li>
+                            <li><strong>Clinical Milk Fever:</strong> Blood calcium < 1.4 mmol/L. Cow is unable to stand (recumbent).</li>
                         </ul>
                          <h4 class="font-bold mt-4 mb-2">Management Focus</h4>
                          <p class="text-sm text-stone-600">Successful prevention relies on pre-calving DCAD and magnesium management. Post-calving oral calcium boluses can help high-risk cows.</p>
@@ -296,14 +296,14 @@
                 },
                 magnesium: {
                     title: "Magnesium",
-                    unit: "mg/dL",
-                    threshold: 1.8,
+                    unit: "mmol/L",
+                    threshold: 0.75,
                     interpretation: "Low levels reflect poor recent dietary intake and compromise the cow's entire metabolic engine.",
                     chart: {
                         labels: ['Clinical Concern', 'Reference Range'],
-                        values: [1.8, 2.1],
+                        values: [0.75, 0.55],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 3.9,
+                        max: 1.3,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Energy & Calcium Enabler</h4>
@@ -312,14 +312,14 @@
                 },
                 phosphorus: {
                     title: "Phosphorus",
-                    unit: "mg/dL",
-                    threshold: 2.0,
-                    interpretation: "Severe deficiency is rare and usually secondary to other issues like prolonged anorexia.",
+                    unit: "mmol/L",
+                    threshold: 0.65,
+                    interpretation: "Severe deficiency (<0.65 mmol/L) is rare and usually secondary to other issues like prolonged anorexia.",
                     chart: {
                         labels: ['Severe Concern', 'Reference Range'],
-                        values: [2.0, 5.9],
+                        values: [0.65, 1.98],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 7.9,
+                        max: 2.63,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Secondary Complication</h4>
@@ -338,7 +338,7 @@
             card.id = `card-${key}`;
 
             const thresholdText = data.threshold !== null ?
-                `<span class="font-bold text-2xl ${data.threshold > 50 ? 'text-red-600' : (data.threshold > 1 ? 'text-amber-600' : 'text-emerald-600')}">${data.threshold}</span> <span class="text-stone-500">${data.unit}</span>` :
+                `<span class="font-bold text-2xl text-emerald-700">${data.threshold}</span> <span class="text-stone-500">${data.unit}</span>` :
                 '<span class="text-lg text-stone-500">N/A</span>';
             
             const thresholdLabel = data.threshold !== null ? 'Key Threshold' : 'Status';
@@ -417,12 +417,26 @@
                 document.getElementById(`card-${key}`).querySelector('p').textContent = cardData.interpretation;
                 
                 const thresholdEl = document.getElementById(`threshold-${key}`);
+                const thresholdLabelEl = thresholdEl.previousElementSibling;
+
                 if (cardData.threshold !== null) {
-                    thresholdEl.innerHTML = `<span class="font-bold text-2xl ${cardData.threshold > 50 ? 'text-red-600' : (cardData.threshold > 1.5 ? 'text-amber-600' : 'text-emerald-600')}">${cardData.threshold}</span> <span class="text-stone-500">${cardData.unit}</span>`;
-                    thresholdEl.previousElementSibling.textContent = 'Key Threshold';
+                    let colorClass = 'text-emerald-700';
+                    if (key === 'nefa' || key === 'bhba') colorClass = 'text-amber-600';
+                    if (key === 'magnesium' && currentState === 'springer') colorClass = 'text-amber-600';
+                    if (key === 'calcium' && currentState === 'fresh') colorClass = 'text-amber-600';
+
+
+                    thresholdEl.innerHTML = `<span class="font-bold text-2xl ${colorClass}">${cardData.threshold}</span> <span class="text-stone-500">${cardData.unit}</span>`;
+                    
+                    if (currentState === 'springer' && (key === 'calcium' || key === 'phosphorus')) {
+                        thresholdLabelEl.textContent = 'Target Minimum';
+                    } else {
+                        thresholdLabelEl.textContent = 'Key Threshold';
+                    }
+
                 } else {
                     thresholdEl.innerHTML = `<span class="text-lg text-stone-500">N/A</span>`;
-                    thresholdEl.previousElementSibling.textContent = 'Status';
+                    thresholdLabelEl.textContent = 'Status';
                 }
 
                 document.getElementById(`details-${key}`).innerHTML = cardData.details;
@@ -431,6 +445,7 @@
                     chartInstance.data.labels = cardData.chart.labels;
                     chartInstance.data.datasets[0].data = cardData.chart.values;
                     chartInstance.data.datasets[0].backgroundColor = cardData.chart.colors;
+                    chartInstance.options.scales = { y: { max: cardData.chart.max } };
                     chartInstance.update();
                 }
             });
