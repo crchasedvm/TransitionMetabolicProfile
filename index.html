@@ -152,17 +152,18 @@
                 bhba: {
                     title: "BHBA (Ketosis)",
                     unit: "mmol/L",
-                    threshold: null,
-                    interpretation: "Not a primary concern pre-calving. Blood levels are very seldom elevated in this group.",
+                    threshold: 0.6,
+                    interpretation: "While less common than high NEFA, elevated levels can indicate severe pre-calving energy stress and predict future disease.",
                     chart: {
-                        labels: ['Normal'],
-                        values: [1.2],
-                        colors: ['#22c55e'],
+                        labels: ['Normal', 'At Risk'],
+                        values: [0.6, 0.6],
+                        colors: ['#22c55e', '#f97316'],
                         max: 1.2,
                     },
                     details: `
-                        <h4 class="font-bold mt-4 mb-2">Pre-partum (Springer) Monitoring</h4>
-                        <p class="text-sm text-stone-600">BHBA is generally not monitored in pre-fresh cows. The metabolic pathway that leads to high BHBA (ketogenesis) is primarily a post-calving phenomenon driven by the massive energy demands of lactation. The focus for energy management in the springer group is on controlling NEFA levels, as this is the precursor to post-calving ketosis.</p>
+                        <h4 class="font-bold mt-4 mb-2">An Emerging Predictive Tool</h4>
+                        <p class="text-sm text-stone-600">While traditionally viewed as a post-calving issue, recent research from institutions like the University of Guelph has highlighted the predictive value of measuring BHBA before calving. While high NEFA indicates fat mobilization, an elevated BHBA pre-calving suggests this mobilization is so severe that the liver is already producing ketones.</p>
+                        <p class="text-sm text-stone-600 mt-2">A pre-partum BHBA concentration <strong>≥ 0.6 mmol/L</strong> is considered a risk factor. It identifies cows under more extreme metabolic stress and is associated with a higher likelihood of developing clinical ketosis and displaced abomasum after calving. While NEFA remains the primary indicator of pre-calving NEB, BHBA can serve as a more specific secondary flag for cows in the most critical state.</p>
                     `
                 },
                 calcium: {
