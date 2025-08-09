@@ -136,7 +136,6 @@
                         labels: ['Normal', 'At Risk'],
                         values: [0.40, 0.60],
                         colors: ['#22c55e', '#f97316'],
-                        max: 1.0,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Pre-partum (Springer) Monitoring</h4>
@@ -158,7 +157,6 @@
                         labels: ['Normal', 'At Risk'],
                         values: [0.6, 0.6],
                         colors: ['#22c55e', '#f97316'],
-                        max: 1.2,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">An Emerging Predictive Tool</h4>
@@ -175,7 +173,6 @@
                         labels: ['Target Range'],
                         values: [2.5],
                         colors: ['#22c55e'],
-                        max: 2.5,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Pre-partum Management Goal</h4>
@@ -198,7 +195,6 @@
                         labels: ['Clinical Concern', 'Reference Range'],
                         values: [0.75, 0.55],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 1.3,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">The Essential Cofactor</h4>
@@ -219,7 +215,6 @@
                         labels: ['Target Range'],
                         values: [2.6],
                         colors: ['#22c55e'],
-                        max: 2.6,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">The Link to Calcium</h4>
@@ -237,7 +232,6 @@
                         labels: ['Normal', 'At Risk'],
                         values: [0.70, 0.5],
                         colors: ['#22c55e', '#f97316'],
-                        max: 1.2,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Post-partum (Fresh Cow) Monitoring</h4>
@@ -259,7 +253,6 @@
                         labels: ['Normal', 'Subclinical Ketosis', 'Clinical Ketosis'],
                         values: [1.2, 1.4, 0.4],
                         colors: ['#22c55e', '#f97316', '#ef4444'],
-                        max: 3.0,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Diagnosing Ketosis</h4>
@@ -281,7 +274,6 @@
                         labels: ['Clinical (Milk Fever)', 'Subclinical', 'Normal'],
                         values: [1.4, 0.7, 0.4],
                         colors: ['#ef4444', '#f97316', '#22c55e'],
-                        max: 2.5,
                     },
                      details: `
                         <h4 class="font-bold mt-4 mb-2">The Gateway Disease</h4>
@@ -303,7 +295,6 @@
                         labels: ['Clinical Concern', 'Reference Range'],
                         values: [0.75, 0.55],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 1.3,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Energy & Calcium Enabler</h4>
@@ -319,7 +310,6 @@
                         labels: ['Severe Concern', 'Reference Range'],
                         values: [0.65, 1.98],
                         colors: ['#ef4444', '#22c55e'],
-                        max: 2.63,
                     },
                     details: `
                         <h4 class="font-bold mt-4 mb-2">Secondary Complication</h4>
@@ -338,7 +328,7 @@
             card.id = `card-${key}`;
 
             const thresholdText = data.threshold !== null ?
-                `<span class="font-bold text-2xl text-emerald-700">${data.threshold}</span> <span class="text-stone-500">${data.unit}</span>` :
+                `<span class="font-bold text-2xl text-emerald-700">${(data.threshold).toFixed(2)}</span> <span class="text-stone-500">${data.unit}</span>` :
                 '<span class="text-lg text-stone-500">N/A</span>';
             
             const thresholdLabel = data.threshold !== null ? 'Key Threshold' : 'Status';
@@ -395,7 +385,8 @@
                                 enabled: true,
                                 callbacks: {
                                     label: function(context) {
-                                        return `${context.label}: ${context.raw}`;
+                                        let value = context.raw;
+                                        return `${context.label}: ${value.toFixed(2)}`;
                                     }
                                 }
                             }
@@ -426,7 +417,7 @@
                     if (key === 'calcium' && currentState === 'fresh') colorClass = 'text-amber-600';
 
 
-                    thresholdEl.innerHTML = `<span class="font-bold text-2xl ${colorClass}">${cardData.threshold}</span> <span class="text-stone-500">${cardData.unit}</span>`;
+                    thresholdEl.innerHTML = `<span class="font-bold text-2xl ${colorClass}">${(cardData.threshold).toFixed(2)}</span> <span class="text-stone-500">${cardData.unit}</span>`;
                     
                     if (currentState === 'springer' && (key === 'calcium' || key === 'phosphorus')) {
                         thresholdLabelEl.textContent = 'Target Minimum';
@@ -445,7 +436,6 @@
                     chartInstance.data.labels = cardData.chart.labels;
                     chartInstance.data.datasets[0].data = cardData.chart.values;
                     chartInstance.data.datasets[0].backgroundColor = cardData.chart.colors;
-                    chartInstance.options.scales = { y: { max: cardData.chart.max } };
                     chartInstance.update();
                 }
             });
